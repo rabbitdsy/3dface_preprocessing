@@ -4,8 +4,6 @@
 # In[1]:
 
 
-import requests  
-import json  
 import numpy as np
 import os
 import sys

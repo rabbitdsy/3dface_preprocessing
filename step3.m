@@ -3,20 +3,21 @@
 
 % ensure meshmonk is on your MATLAB path
 clear all; close all;
-addpath(genpath('/mnt/storage/personal_data/lijiarui/meshmonk/')) % change this to the correct path on your computer
+addpath(genpath('C:\Users\user\Documents\Github\meshmonk\')) % change this to the correct path on your computer
 
-path2results = '../step3/';
-path2objs = '../step2/'; % check always that the path ends with a separator chara
+path2results = '..\step3\';
+path2objs = '..\step1\'; % check always that the path ends with a separator chara
 %path2landmarks = '/uz/data/avalok/mic/tmp/hmatth5/Projects/meshmonk/tutorial/TutorialData/Landmarks/';
 %path2results = strcat(tutorialPath,filesep,'MappedResults');
 % get structs containing information for each file
 
 %check if path2results exists and create it if not
 if ~exist(path2results,'dir')
-    mkdir(path2results)
+    mkdir(path2results);
 end
 
 objs = dir(strcat(path2objs,'*.obj'));
+%objs=objs(3400:25103);
 %landmarks = dir(strcat(path2landmarks,'*.csv'));
 
 
@@ -36,7 +37,7 @@ objs = dir(strcat(path2objs,'*.obj'));
 % in general this works fine and the settings don't need that much thinking
 % about
 RM= ShapeMapper;
-RM.NumIterations = 150;
+RM.NumIterations =  150;
 
 RM.TransformationType = 'rigid';
 RM.UseScaling = true;
@@ -71,7 +72,7 @@ RM.UpSampleTarget = false; % will upsample the target mesh. if meshes are irregu
 % Set up non rigid ICP with ShapeMapper with 'nonrigid' transformation type
 NRM = ShapeMapper;
 NRM.TransformationType = 'nonrigid';
-NRM.NumIterations = 200; 
+NRM.NumIterations =  200; 
 NRM.CorrespondencesSymmetric = true;
 NRM.CorrespondencesNumNeighbours = 3;
 NRM.CorrespondencesFlagThreshold = 0.9;
@@ -111,58 +112,45 @@ NRM.TransformNumNeighbors = 80;
 %% Batch process files
 
 % load Template floating face
-load Template
+load Template;
 
 %Floating = shape3D;
 %Floating.importWavefront('Template.obj',strcat(tutorialPath, filesep,'TutorialData/'));
-forFloating = clone(Template)
+forFloating = clone(Template);
 % load landmarks on templa
 %%zz
 
 
+%parfor f = 1:numel(objs)
 parfor f = 1:numel(objs)
+   objs(f).name
    % load Target obj and landmarks
    targetName = objs(f).name;
    Target = shape3D;
    Target.importWavefront(targetName, path2objs);
    
-   if ~normalsConsistent(Target, forFloating)
-       Target.FlipNormals = true;
-   end
+   %if ~normalsConsistent(Target, forFloating)
+   %    Target.FlipNormals = true;
+   %end
    
    
    % Execute Rigid Mapping
    forRM = clone(RM);
    forRM.FloatingShape = clone(forFloating);
    forRM.TargetShape = clone(Target);
-   
    forRM.map();
    
    % Execute Non-Rigid Mapping
    forNRM = clone(NRM);
    forNRM.FloatingShape = forRM.FloatingShape; % floating shape is now the floating shaoe after Rigid Mapping
    forNRM.TargetShape = Target;
-   forNRM.map()
+   forNRM.map();
    
    
    %save result
    forNRM.FloatingShape.exportWavefront(targetName,path2results);
-   forNRM.FloatingShape.exportWavefront(targetName,path2results);
+   %forNRM.FloatingShape.exportWavefront(targetName,path2results);
    %csvwrite([targetName,'csv'],forNRM.FloatingShape.Vertices);
    
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
