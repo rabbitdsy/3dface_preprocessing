@@ -2,9 +2,9 @@ filename='0405796910.obj';
 %% prepare for work 
 
 % Add MeshMonk's toolbox to the working path and setup current folder
-addpath(genpath('/data/dermatogenomics4/lijiarui/meshmonk')) % Set to location of meshmonk
+addpath(genpath('C:\Users\user\Documents\Github\meshmonk\')) % Set to location of meshmonk
 %addpath('/data/dermatogenomics4/build/meshmonk/')   % Set to location of demo material
-filepath = '../step2/';
+filepath = '../step1/';
 savepath='../step3_mapping/';
 demoFace = shape3D;
 importWavefront(demoFace,filename,filepath,[]);
